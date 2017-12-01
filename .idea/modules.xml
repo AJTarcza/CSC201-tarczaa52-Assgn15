@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/CSC201-tarczaa52-Assgn15.iml" filepath="$PROJECT_DIR$/CSC201-tarczaa52-Assgn15.iml" />
       <module fileurl="file://$PROJECT_DIR$/TowersOfHanoi.iml" filepath="$PROJECT_DIR$/TowersOfHanoi.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

@@ -7,6 +7,24 @@
     android:layout_height="match_parent"
     tools:context="edu.sunyulster.tarczamy.towersofhanoi.MainActivity">
 
+    <ImageView
+        android:id="@+id/peg3"
+        android:layout_width="122dp"
+        android:layout_height="113dp"
+        app:srcCompat="@drawable/peg"
+        tools:layout_editor_absoluteY="95dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/peg2" />
+
+    <ImageView
+        android:id="@+id/peg2"
+        android:layout_width="122dp"
+        android:layout_height="113dp"
+        app:srcCompat="@drawable/peg"
+        tools:layout_editor_absoluteY="95dp"
+        app:layout_constraintRight_toLeftOf="@+id/peg3"
+        app:layout_constraintLeft_toRightOf="@+id/peg1" />
+
     <Button
         android:id="@+id/animateButton"
         android:layout_width="wrap_content"
@@ -17,6 +35,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <edu.sunyulster.tarczamy.values.DrawView />
+    <ImageView
+        android:id="@+id/peg1"
+        android:layout_width="122dp"
+        android:layout_height="113dp"
+        app:srcCompat="@drawable/peg"
+        tools:layout_editor_absoluteY="95dp"
+        app:layout_constraintRight_toLeftOf="@+id/peg2"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
