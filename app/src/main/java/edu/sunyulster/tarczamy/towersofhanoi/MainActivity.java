@@ -1,5 +1,6 @@
 package edu.sunyulster.tarczamy.towersofhanoi;
 
+import android.animation.ObjectAnimator;
 import android.media.Image;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             // Add layout parameters to ImageView
             iv.setLayoutParams(lp);
 
-            iv.setX(i * 100);
+            //iv.setX(i * 100);
             iv.setY(i * 100);
 
             // Finally, add the ImageView to layout
@@ -100,29 +101,39 @@ public class MainActivity extends AppCompatActivity {
 
     public static void moveRings(int n, Stack pegA, Stack pegB, Stack pegC, int ax, int bx, int cx) {
 
-        if (n > 0) {
-            ImageView top = (ImageView) pegA.peek();
-            //Move n-1 rings from A to B.
-            Animation animation1 = new TranslateAnimation(0.0f, bx, 0.0f, 0.0f);
-            animation1.setFillEnabled(true);
-            animation1.setDuration(3000);
-            top.startAnimation(animation1);
+        Animation moveToB = new TranslateAnimation(0.0f, bx, 0.0f, 0.0f);
+        moveToB.setFillAfter(true);
+        moveToB.setDuration(3000);
 
+        Animation moveToC = new TranslateAnimation(0.0f, cx, 0.0f, 0.0f);
+        moveToC.setFillAfter(true);
+        moveToC.setDuration(3000);
+
+        if (n > 0) {
+            ImageView poppedValue = (ImageView) pegA.pop();
+
+            ObjectAnimator transAnimation = ObjectAnimator.ofFloat(poppedValue, "translationX", bx);
+            transAnimation.setDuration(3000);//set duration
+            transAnimation.start();//start animation
+
+            //Move n-1 rings from A to B.
+            pegB.push(poppedValue);
+            //poppedValue.startAnimation(moveToB);
             moveRings(n-1, pegA, pegC, pegB, ax, cx, bx);
 
             //Move disc n from A to C
-            ImageView poppedValue = (ImageView) pegA.pop();
             pegC.push(poppedValue);
-
-            Animation animation2 = new TranslateAnimation(0.0f, cx, 0.0f, 0.0f);
-            animation2.setFillAfter(true);
-            animation2.setDuration(3000);
-            poppedValue.startAnimation(animation2);
+            //poppedValue.startAnimation(moveToC);
+            ObjectAnimator transAnimation2= ObjectAnimator.ofFloat(poppedValue, "translationX", cx);
+            transAnimation2.setDuration(3000);//set duration
+            transAnimation2.start();//start animation
 
             //Move n-1 discs from B to C so they sit on disc n
             moveRings(n-1, pegB, pegA, pegC, bx, ax, cx);
         }	//End if
 
     }	//End moveRings
+
+
 
 }
