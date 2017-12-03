@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     int[] pegCLoc = new int[2];
     int pegCX;
 
+    Button button;
+
     Stack<ImageView> A;
     Stack<ImageView> B;
     Stack<ImageView> C;
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ConstraintLayout rl = (ConstraintLayout) findViewById(R.id.constraint01);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 1; i <= 3; i++) {
             // Initialize a new ImageView widget
             ImageView iv = new ImageView(getApplicationContext());
 
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             iv.setImageResource(R.drawable.ring);
 
             // Create layout parameters for ImageView
-            LayoutParams lp = new LayoutParams(i + 200, i + 100);
+            LayoutParams lp = new LayoutParams(i * 100, i * 40);
 
             // Add rule to layout parameters
             // Add the ImageView below to Button
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             iv.setLayoutParams(lp);
 
             //iv.setX(i * 100);
-            iv.setY(i * 100);
+            iv.setY(i * 50);
 
             // Finally, add the ImageView to layout
             rl.addView(iv);
@@ -73,6 +75,14 @@ public class MainActivity extends AppCompatActivity {
         pegB = (ImageView) findViewById(R.id.peg2);
         pegC = (ImageView) findViewById(R.id.peg3);
 
+        button = (Button) findViewById(R.id.animateButton);
+
+        button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    int n = A.size();
+                    moveRings(n, A, B, C, pegAX, pegBX, pegCX);
+                }
+            });
     }
 
     @Override
@@ -93,27 +103,29 @@ public class MainActivity extends AppCompatActivity {
         pegC.getLocationOnScreen(pegCLoc);
 
         pegCX = pegCLoc[0];
-
-        int n = A.size();
-
-        moveRings(n, A, B, C, pegAX, pegBX, pegCX);
     }
 
     public static void moveRings(int n, Stack pegA, Stack pegB, Stack pegC, int ax, int bx, int cx) {
 
-        Animation moveToB = new TranslateAnimation(0.0f, bx, 0.0f, 0.0f);
+        /*Animation moveToB = new TranslateAnimation(0.0f, bx, 0.0f, 0.0f);
         moveToB.setFillAfter(true);
         moveToB.setDuration(3000);
 
         Animation moveToC = new TranslateAnimation(0.0f, cx, 0.0f, 0.0f);
         moveToC.setFillAfter(true);
-        moveToC.setDuration(3000);
+        moveToC.setDuration(3000);*/
 
         if (n > 0) {
             ImageView poppedValue = (ImageView) pegA.pop();
 
             ObjectAnimator transAnimation = ObjectAnimator.ofFloat(poppedValue, "translationX", bx);
             transAnimation.setDuration(3000);//set duration
+            transAnimation.setStartDelay(500);
+
+            ObjectAnimator transAnimation2 = ObjectAnimator.ofFloat(poppedValue, "translationX", cx);
+            transAnimation2.setDuration(3000);//set duration
+            transAnimation2.setStartDelay(1500);
+
             transAnimation.start();//start animation
 
             //Move n-1 rings from A to B.
@@ -124,8 +136,7 @@ public class MainActivity extends AppCompatActivity {
             //Move disc n from A to C
             pegC.push(poppedValue);
             //poppedValue.startAnimation(moveToC);
-            ObjectAnimator transAnimation2= ObjectAnimator.ofFloat(poppedValue, "translationX", cx);
-            transAnimation2.setDuration(3000);//set duration
+
             transAnimation2.start();//start animation
 
             //Move n-1 discs from B to C so they sit on disc n
@@ -133,7 +144,5 @@ public class MainActivity extends AppCompatActivity {
         }	//End if
 
     }	//End moveRings
-
-
 
 }
