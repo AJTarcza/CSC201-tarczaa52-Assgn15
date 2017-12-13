@@ -1,5 +1,7 @@
 package edu.sunyulster.tarczamy.towersofhanoi;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.media.Image;
 import android.support.constraint.ConstraintLayout;
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView pegA;
     ImageView pegB;
     ImageView pegC;
+
+    boolean runLogic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,42 +109,56 @@ public class MainActivity extends AppCompatActivity {
         pegCX = pegCLoc[0];
     }
 
-    public static void moveRings(int n, Stack pegA, Stack pegB, Stack pegC, int ax, int bx, int cx) {
-
-        /*Animation moveToB = new TranslateAnimation(0.0f, bx, 0.0f, 0.0f);
-        moveToB.setFillAfter(true);
-        moveToB.setDuration(3000);
-
-        Animation moveToC = new TranslateAnimation(0.0f, cx, 0.0f, 0.0f);
-        moveToC.setFillAfter(true);
-        moveToC.setDuration(3000);*/
+    public void moveRings(int n, Stack pegA, Stack pegB, Stack pegC, int ax, int bx, int cx) {
 
         if (n > 0) {
-            ImageView poppedValue = (ImageView) pegA.pop();
+                ImageView poppedValue = (ImageView) pegA.pop();
 
-            ObjectAnimator transAnimation = ObjectAnimator.ofFloat(poppedValue, "translationX", bx);
-            transAnimation.setDuration(3000);//set duration
-            transAnimation.setStartDelay(500);
+                runLogic = false;
 
-            ObjectAnimator transAnimation2 = ObjectAnimator.ofFloat(poppedValue, "translationX", cx);
-            transAnimation2.setDuration(3000);//set duration
-            transAnimation2.setStartDelay(1500);
+                ObjectAnimator transAnimation = ObjectAnimator.ofFloat(poppedValue, "translationX", bx);
+                transAnimation.setDuration(3000);//set duration
+                transAnimation.setStartDelay(500);
 
+                ObjectAnimator transAnimation2 = ObjectAnimator.ofFloat(poppedValue, "translationX", cx);
+                transAnimation2.setDuration(3000);//set duration
+                transAnimation2.setStartDelay(1500);
+
+            transAnimation.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    runLogic = true;
+                }
+            });
+
+            transAnimation2.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    runLogic = true;
+                }
+            });
+
+            //start the animation
             transAnimation.start();//start animation
 
-            //Move n-1 rings from A to B.
-            pegB.push(poppedValue);
-            //poppedValue.startAnimation(moveToB);
-            moveRings(n-1, pegA, pegC, pegB, ax, cx, bx);
 
-            //Move disc n from A to C
-            pegC.push(poppedValue);
-            //poppedValue.startAnimation(moveToC);
+            if(runLogic) {
+                //Move n-1 rings from A to B.
+                pegB.push(poppedValue);
+                moveRings(n - 1, pegA, pegC, pegB, ax, cx, bx);
 
-            transAnimation2.start();//start animation
+                //Move disc n from A to C
+                pegC.push(poppedValue);
+            }   //End if
 
-            //Move n-1 discs from B to C so they sit on disc n
-            moveRings(n-1, pegB, pegA, pegC, bx, ax, cx);
+            runLogic = false;
+
+                transAnimation2.start();//start animation
+
+            if(runLogic) {
+                //Move n-1 discs from B to C so they sit on disc n
+                moveRings(n - 1, pegB, pegA, pegC, bx, ax, cx);
+            }
         }	//End if
 
     }	//End moveRings
