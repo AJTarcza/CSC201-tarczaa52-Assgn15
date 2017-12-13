@@ -7,6 +7,7 @@ import android.media.Image;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Stack<ImageView> A;
     Stack<ImageView> B;
     Stack<ImageView> C;
+    int heightOffset;
 
     ImageView pegA;
     ImageView pegB;
@@ -49,8 +51,15 @@ public class MainActivity extends AppCompatActivity {
         C = new Stack<ImageView>();
 
         final ConstraintLayout rl = (ConstraintLayout) findViewById(R.id.constraint01);
+        final int RINGS = 3;
 
-        for (int i = 1; i <= 3; i++) {
+        heightOffset = 130;
+
+        pegA = (ImageView) findViewById(R.id.peg1);
+        pegB = (ImageView) findViewById(R.id.peg2);
+        pegC = (ImageView) findViewById(R.id.peg3);
+
+        for (int i = RINGS; i > 0; i--) {
             // Initialize a new ImageView widget
             ImageView iv = new ImageView(getApplicationContext());
 
@@ -68,16 +77,22 @@ public class MainActivity extends AppCompatActivity {
             iv.setLayoutParams(lp);
 
             //iv.setX(i * 100);
-            iv.setY(i * 50);
+            if(i < RINGS) {
+                if (i > 1)
+                    iv.setY(heightOffset + 50);
+                else
+                    iv.setY(heightOffset + 5);
+            }
+
+            else
+                iv.setY(heightOffset);
+
+            heightOffset = iv.getHeight();
 
             // Finally, add the ImageView to layout
             rl.addView(iv);
             A.push(iv);
         }
-
-        pegA = (ImageView) findViewById(R.id.peg1);
-        pegB = (ImageView) findViewById(R.id.peg2);
-        pegC = (ImageView) findViewById(R.id.peg3);
 
         button = (Button) findViewById(R.id.animateButton);
 
@@ -118,11 +133,9 @@ public class MainActivity extends AppCompatActivity {
 
                 ObjectAnimator transAnimation = ObjectAnimator.ofFloat(poppedValue, "translationX", bx);
                 transAnimation.setDuration(3000);//set duration
-                transAnimation.setStartDelay(500);
 
                 ObjectAnimator transAnimation2 = ObjectAnimator.ofFloat(poppedValue, "translationX", cx);
                 transAnimation2.setDuration(3000);//set duration
-                transAnimation2.setStartDelay(1500);
 
             transAnimation.addListener(new AnimatorListenerAdapter() {
                 @Override
