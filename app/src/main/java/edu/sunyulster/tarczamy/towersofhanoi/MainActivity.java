@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     Stack<ImageView> B;
     Stack<ImageView> C;
     int heightOffset;
+    int xOffset;
 
     ImageView pegA;
     ImageView pegB;
@@ -51,14 +52,20 @@ public class MainActivity extends AppCompatActivity {
         C = new Stack<ImageView>();
 
         final ConstraintLayout rl = (ConstraintLayout) findViewById(R.id.constraint01);
-        final int RINGS = 3;
+
+        //Get the bundle
+        Bundle bundle = getIntent().getExtras();
+
+        final int RINGS = bundle.getInt("RingAmount");
 
         heightOffset = 130;
+        xOffset = 170;
 
         pegA = (ImageView) findViewById(R.id.peg1);
         pegB = (ImageView) findViewById(R.id.peg2);
         pegC = (ImageView) findViewById(R.id.peg3);
 
+        //Create the rings
         for (int i = RINGS; i > 0; i--) {
             // Initialize a new ImageView widget
             ImageView iv = new ImageView(getApplicationContext());
@@ -67,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             iv.setImageResource(R.drawable.ring);
 
             // Create layout parameters for ImageView
-            LayoutParams lp = new LayoutParams(i * 100, i * 40);
+            LayoutParams lp = new LayoutParams(100 , 40);
 
             // Add rule to layout parameters
             // Add the ImageView below to Button
@@ -76,16 +83,13 @@ public class MainActivity extends AppCompatActivity {
             // Add layout parameters to ImageView
             iv.setLayoutParams(lp);
 
-            //iv.setX(i * 100);
+            iv.setX(140);
             if(i < RINGS) {
-                if (i > 1)
-                    iv.setY(heightOffset + 50);
-                else
-                    iv.setY(heightOffset + 5);
+                iv.setY(heightOffset + (i * 50));
             }
 
             else
-                iv.setY(heightOffset);
+                iv.setY(heightOffset + (i * 20));
 
             heightOffset = iv.getHeight();
 
@@ -108,43 +112,51 @@ public class MainActivity extends AppCompatActivity {
      public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
          //Get the xy coordinates of each peg
+
+        //Get peg locations
+        final int pegOffset = 110;
+
         pegALoc = new int[2];
         pegA.getLocationOnScreen(pegALoc);
 
-        pegAX = pegALoc[0];
+        pegAX = pegALoc[0] + pegOffset;
 
         pegBLoc = new int[2];
         pegB.getLocationOnScreen(pegBLoc);
 
-        pegBX = pegBLoc[0];
+        pegBX = pegBLoc[0] + pegOffset;
 
         pegCLoc = new int[2];
         pegC.getLocationOnScreen(pegCLoc);
 
-        pegCX = pegCLoc[0];
+        pegCX = pegCLoc[0] + pegOffset;
     }
 
+    //Recursively move the rings to the appropriate stacks
     public void moveRings(int n, Stack pegA, Stack pegB, Stack pegC, int ax, int bx, int cx) {
 
         if (n > 0) {
-                ImageView poppedValue = (ImageView) pegA.pop();
+            ImageView poppedValue = (ImageView) pegA.pop();
 
-                runLogic = false;
+            //Boolean for individualized animation logic
+            runLogic = false;
 
-                ObjectAnimator transAnimation = ObjectAnimator.ofFloat(poppedValue, "translationX", bx);
-                transAnimation.setDuration(3000);//set duration
+            //Create animations
+            ObjectAnimator moveToB = ObjectAnimator.ofFloat(poppedValue, "translationX", bx);
+            moveToB.setDuration(3000);//set duration
 
-                ObjectAnimator transAnimation2 = ObjectAnimator.ofFloat(poppedValue, "translationX", cx);
-                transAnimation2.setDuration(3000);//set duration
+            ObjectAnimator moveToC = ObjectAnimator.ofFloat(poppedValue, "translationX", cx);
+            moveToC.setDuration(3000);//set duration
 
-            transAnimation.addListener(new AnimatorListenerAdapter() {
+            //Animation ended listeners
+            moveToB.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     runLogic = true;
                 }
             });
 
-            transAnimation2.addListener(new AnimatorListenerAdapter() {
+            moveToC.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     runLogic = true;
@@ -152,12 +164,11 @@ public class MainActivity extends AppCompatActivity {
             });
 
             //start the animation
-            transAnimation.start();//start animation
+            moveToB.start();
 
-
+            //If the animation has finished
             if(runLogic) {
                 //Move n-1 rings from A to B.
-                pegB.push(poppedValue);
                 moveRings(n - 1, pegA, pegC, pegB, ax, cx, bx);
 
                 //Move disc n from A to C
@@ -166,7 +177,9 @@ public class MainActivity extends AppCompatActivity {
 
             runLogic = false;
 
-                transAnimation2.start();//start animation
+            //Start the animation
+            moveToC.start();
+
 
             if(runLogic) {
                 //Move n-1 discs from B to C so they sit on disc n
